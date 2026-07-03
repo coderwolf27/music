@@ -1,0 +1,74 @@
+# Copyright (c) 2025 AnonymousX1025
+# Licensed under the MIT License.
+# This file is part of AnonXMusic
+
+
+import json
+from pathlib import Path
+
+# Fallback unicode used whenever a custom emoji id hasn't been configured
+# (or when the viewing client doesn't support custom emoji, e.g. some
+# desktop/web clients on very old versions). Keeps the bot fully usable
+# even before you've set up your premium emoji pack.
+DEFAULTS = {
+    "play": "▶️",
+    "pause": "⏸",
+    "stop": "⏹",
+    "skip": "⏭",
+    "replay": "🔁",
+    "queue": "📜",
+    "music": "🎧",
+    "mic": "🎤",
+    "clock": "⏱",
+    "user": "👤",
+    "fire": "🔥",
+    "star": "⭐",
+    "check": "✅",
+    "cross": "❌",
+    "heart": "💜",
+    "vote": "🗳",
+    "lyrics": "📝",
+    "sparkle": "✨",
+    "link": "🔗",
+}
+
+
+class PremiumEmoji:
+    """
+    Thin wrapper around Telegram custom (premium) emoji.
+
+    Custom emoji can only be embedded in message TEXT/CAPTIONS (via the
+    `<emoji id="...">` HTML tag that Pyrogram's HTML parser understands),
+    never inside inline button labels -- Telegram's Bot API does not support
+    entities on button text, only plain unicode. Buttons get colour-coded
+    unicode emoji instead (see helpers/_inline.py); this class handles the
+    "real" premium emoji used in Now Playing cards, /start, /help, etc.
+
+    IDs are loaded from `emoji_pack.json` in the project root. Populate that
+    file by running `scripts/get_emoji_ids.py` with a Premium account's
+    session string (see that script's docstring for instructions).
+    """
+
+    def __init__(self, path: str = "emoji_pack.json"):
+        self.path = Path(path)
+        self.ids: dict[str, str] = {}
+        self.reload()
+
+    def reload(self) -> None:
+        if self.path.exists():
+            try:
+                self.ids = json.loads(self.path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                self.ids = {}
+
+    def tag(self, name: str, fallback: str = None) -> str:
+        """Return an HTML-ready emoji tag for use inside .format()'d strings."""
+        char = fallback or DEFAULTS.get(name, "•")
+        emoji_id = self.ids.get(name)
+        if emoji_id:
+            return f'<emoji id="{emoji_id}">{char}</emoji>'
+        return char
+
+    def raw(self, name: str) -> str:
+        """Plain unicode fallback only -- safe for button labels."""
+        return DEFAULTS.get(name, "•")
