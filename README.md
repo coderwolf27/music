@@ -21,7 +21,7 @@ Supports YouTube, Spotify, Resso, Apple Music, SoundCloud and M3U8 links.
 
 <img src="https://github.com/coderwolf27/music/blob/master/.github/anonx.jpg" width="720" height="auto">
 
-AnonXMusic lets you stream high-quality and low-latency audio and video playback into telegram group video chats.<br>
+EarBudBot lets you stream high-quality and low-latency audio and video playback into telegram group video chats.<br>
 Built with Python, Pyrogram, and Py-TgCalls, it’s optimized for reliability and easy deployment on Heroku, VPS, or Docker.
 </div>
 
@@ -62,7 +62,7 @@ for the full rundown and setup steps.
 <h4>🐧 Linux/macOS</h4>
 
 ```bash
-git clone https://github.com/coderwolf27/music && cd AnonXMusic
+git clone https://github.com/coderwolf27/music && cd EarBudBot
 
 # Install uv
 curl -Ls https://astral.sh/uv/install.sh | sh
@@ -82,7 +82,7 @@ bash start
 <h4>🪟 Windows (PowerShell)</h4>
 
 ```bash
-git clone https://github.com/coderwolf27/music && cd AnonXMusic
+git clone https://github.com/coderwolf27/music && cd EarBudBot
 
 # Install uv
 irm https://astral.sh/uv/install.ps1 | iex

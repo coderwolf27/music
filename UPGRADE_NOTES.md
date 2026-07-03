@@ -1,6 +1,6 @@
-# AnonXMusic Upgrade Pack
+# EarBudBot Upgrade Pack
 
-Changes on top of upstream `AnonymousX1025/AnonXMusic`. Everything here is additive —
+Changes on top of upstream `AnonymousX1025/EarBudBot`. Everything here is additive —
 no existing commands, DB schema, or config were removed, so it's a drop-in update.
 
 ## 1. Colour-coded control buttons
