@@ -143,6 +143,21 @@ class YouTube:
             }
 
         def _download():
+            # Downloads (especially the "next track" prefetch that kicks in
+            # while a track is already streaming) run in a background
+            # thread. On CPU-constrained VPS, this can starve the ffmpeg
+            # process that's actively feeding the voice call, causing
+            # audio to stutter for a couple seconds and then fast-forward
+            # to catch back up. Lowering this thread's scheduling priority
+            # (Linux "niceness") lets the OS favour the live audio pipeline
+            # whenever both are competing for CPU at the same time.
+            try:
+                current = os.nice(0)
+                if current < 10:
+                    os.nice(10 - current)
+            except (AttributeError, OSError):
+                pass  # not supported on this platform (e.g. Windows) -- fine to skip
+
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 try:
                     ydl.download([url])
