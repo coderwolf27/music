@@ -17,13 +17,26 @@ class Config:
         self.DURATION_LIMIT = int(getenv("DURATION_LIMIT", 60)) * 60
         self.QUEUE_LIMIT = int(getenv("QUEUE_LIMIT", 20))
         self.PLAYLIST_LIMIT = int(getenv("PLAYLIST_LIMIT", 20))
+        # 0 = unlimited. Each concurrent voice-chat stream costs real CPU on
+        # this host -- on a 2 vCPU box, ~6+ simultaneous streams is already
+        # pushing it, and every stream beyond that raises the odds of the
+        # random 2-3s stutter-then-catch-up symptom for EVERYONE, not just
+        # the newest one. Setting a cap protects the streams already
+        # running by politely declining new ones past the limit, instead of
+        # silently degrading all of them together.
+        self.MAX_CONCURRENT_CALLS = int(getenv("MAX_CONCURRENT_CALLS", 0))
+        # HIGH (48kHz stereo) / MEDIUM (36kHz mono) / LOW (24kHz mono).
+        # Lower quality = less CPU per stream = more concurrent streams fit
+        # in the same CPU budget. Worth trying MEDIUM if you're regularly
+        # running many groups at once on limited vCPUs.
+        self.AUDIO_QUALITY = getenv("AUDIO_QUALITY", "HIGH").upper()
 
         self.SESSION1 = getenv("SESSION", None)
         self.SESSION2 = getenv("SESSION2", None)
         self.SESSION3 = getenv("SESSION3", None)
 
-        self.SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/fallenx")
-        self.SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/DevilsHeavenMF")
+        self.SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/vidmage")
+        self.SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/hankie")
 
         self.AUTO_LEAVE: bool = getenv("AUTO_LEAVE", "False").lower() == "true"
         self.AUTO_END: bool = getenv("AUTO_END", "False").lower() == "true"

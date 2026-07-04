@@ -36,6 +36,7 @@ DEFAULTS = {
     "grow": "🌱",
     "logo": "🎧",
     "shining_heart": "💖",
+    "teddy": "🧸",
 }
 
 

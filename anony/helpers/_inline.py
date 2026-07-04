@@ -217,20 +217,21 @@ class Inline:
             ],
             [self.ikb(text=lang["help"], callback_data="help")],
             [
-                self.ikb(text=lang["support"], url=config.SUPPORT_CHAT),
-                self.ikb(text=lang["channel"], url=config.SUPPORT_CHANNEL),
+                self.ikb(
+                    text=lang["support"],
+                    url=config.SUPPORT_CHAT,
+                    style=enums.ButtonStyle.PRIMARY,
+                    icon_custom_emoji_id=pemoji.ids.get("teddy"),
+                ),
+                self.ikb(
+                    text=lang["channel"],
+                    url=config.SUPPORT_CHANNEL,
+                    style=enums.ButtonStyle.PRIMARY,
+                    icon_custom_emoji_id=pemoji.ids.get("music"),
+                ),
             ],
         ]
-        if private:
-            rows += [
-                [
-                    self.ikb(
-                        text=lang["source"],
-                        url="https://github.com/coderwolf27/music",
-                    )
-                ]
-            ]
-        else:
+        if not private:
             rows += [
                 [
                     self.ikb(
