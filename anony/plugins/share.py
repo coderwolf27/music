@@ -22,7 +22,9 @@ async def _share_card(_, query: types.CallbackQuery):
     await query.answer("Generating your share card...")
 
     try:
-        image = await thumb.generate(media)
+        image = await thumb.generate_share_card(
+            media, app.name, app.username, elapsed=media.time
+        )
     except Exception:
         return await query.answer(
             "Couldn't generate a card right now, try again in a bit.",
@@ -31,8 +33,8 @@ async def _share_card(_, query: types.CallbackQuery):
 
     caption = (
         f'{pemoji.tag("logo")} <b>{media.title}</b>\n'
-        f'{pemoji.tag("music")} Streaming now on <b>EarBudBot</b> {pemoji.tag("shining_heart")}\n\n'
-        f"Want music in your group too? Tap below to add me!"
+        f'{pemoji.tag("music")} Streaming now on <b>{app.name}</b> {pemoji.tag("shining_heart")}\n\n'
+        f"Tap and hold to save, then share it to your story! 📤"
     )
     await query.message.reply_photo(
         photo=image,
@@ -41,7 +43,7 @@ async def _share_card(_, query: types.CallbackQuery):
             [
                 [
                     types.InlineKeyboardButton(
-                        text="🎧 Add EarBudBot to your group",
+                        text=f"🎧 Add {app.name} to your group",
                         url=f"https://t.me/{app.username}?startgroup=true",
                     )
                 ]
