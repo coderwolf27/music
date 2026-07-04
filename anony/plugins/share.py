@@ -9,7 +9,7 @@ from anony import app, logger, queue, thumb
 from anony.helpers import Track, pemoji
 
 
-@app.on_callback_query(filters.regex(r"^share \d+") & ~app.bl_users)
+@app.on_callback_query(filters.regex(r"^share -?\d+") & ~app.bl_users)
 async def _share_card(_, query: types.CallbackQuery):
     chat_id = int(query.data.split()[1])
     media = queue.get_current(chat_id)

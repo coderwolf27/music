@@ -68,7 +68,7 @@ async def _vskip_cmd(_, m: types.Message):
     )
 
 
-@app.on_callback_query(filters.regex(r"^vskip \d+") & ~app.bl_users)
+@app.on_callback_query(filters.regex(r"^vskip -?\d+") & ~app.bl_users)
 @lang.language()
 async def _vskip_button(_, query: types.CallbackQuery):
     chat_id = int(query.data.split()[1])

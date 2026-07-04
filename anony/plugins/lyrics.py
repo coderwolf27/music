@@ -74,7 +74,7 @@ async def _lyrics_cmd(_, m: types.Message):
     await sent.edit_text(build_reply(title, lyrics, m.lang))
 
 
-@app.on_callback_query(filters.regex(r"^lyrics \d+") & ~app.bl_users)
+@app.on_callback_query(filters.regex(r"^lyrics -?\d+") & ~app.bl_users)
 @lang.language()
 async def _lyrics_button(_, query: types.CallbackQuery):
     chat_id = int(query.data.split()[1])
