@@ -89,6 +89,7 @@ async def play_hndlr(
         await utils.play_log(m, sent.link, file.title, file.duration)
 
     file.user = mention
+    file.user_id = m.from_user.id
     if force:
         queue.force_add(m.chat.id, file)
     else:

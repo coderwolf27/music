@@ -82,6 +82,9 @@ class TgCall(PyTgCalls):
             if not seek_time:
                 media.time = 1
                 await db.add_call(chat_id)
+                await db.log_play(
+                    chat_id, media.id, media.title, media.user_id, media.user
+                )
                 header = (
                     f'{pemoji.tag("logo")} <b>Now Streaming</b> '
                     f'{pemoji.tag("shining_heart")}\n\n'

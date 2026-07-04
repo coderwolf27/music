@@ -44,6 +44,10 @@ class MongoDB:
         self.users = []
         self.usersdb = self.db.users
 
+        self.songsdb = self.db.song_stats
+        self.userstatsdb = self.db.user_stats
+        self.favsdb = self.db.favorites
+
     async def connect(self) -> None:
         """Check if we can connect to the database.
 
@@ -367,3 +371,62 @@ class MongoDB:
         await self.get_blacklisted(True)
         await self.get_logger()
         logger.info("Database cache loaded.")
+
+    # LEADERBOARD
+    async def log_play(
+        self, chat_id: int, track_id: str, title: str, user_id: int, user_name: str
+    ) -> None:
+        """Record a play for /topsongs + /topusers. Safe to skip silently
+        (e.g. missing user_id on some media types) -- leaderboards are a
+        nice-to-have, never worth failing playback over."""
+        try:
+            await self.songsdb.update_one(
+                {"_id": f"{chat_id}:{track_id}"},
+                {
+                    "$set": {"chat_id": chat_id, "title": title},
+                    "$inc": {"count": 1},
+                },
+                upsert=True,
+            )
+            if user_id:
+                await self.userstatsdb.update_one(
+                    {"_id": f"{chat_id}:{user_id}"},
+                    {
+                        "$set": {"chat_id": chat_id, "user_name": user_name},
+                        "$inc": {"count": 1},
+                    },
+                    upsert=True,
+                )
+        except Exception:
+            pass
+
+    async def top_songs(self, chat_id: int, limit: int = 10) -> list:
+        cursor = self.songsdb.find({"chat_id": chat_id}).sort("count", -1).limit(limit)
+        return await cursor.to_list(length=limit)
+
+    async def top_users(self, chat_id: int, limit: int = 10) -> list:
+        cursor = self.userstatsdb.find({"chat_id": chat_id}).sort("count", -1).limit(limit)
+        return await cursor.to_list(length=limit)
+
+    # FAVORITES
+    async def add_favorite(self, user_id: int, track: dict) -> bool:
+        """Returns False if this track is already saved."""
+        doc = await self.favsdb.find_one({"_id": user_id})
+        if doc and any(t["id"] == track["id"] for t in doc.get("tracks", [])):
+            return False
+        await self.favsdb.update_one(
+            {"_id": user_id},
+            {"$push": {"tracks": {"$each": [track], "$slice": -50}}},  # cap 50
+            upsert=True,
+        )
+        return True
+
+    async def get_favorites(self, user_id: int) -> list:
+        doc = await self.favsdb.find_one({"_id": user_id})
+        return doc.get("tracks", []) if doc else []
+
+    async def remove_favorite(self, user_id: int, track_id: str) -> bool:
+        result = await self.favsdb.update_one(
+            {"_id": user_id}, {"$pull": {"tracks": {"id": track_id}}}
+        )
+        return result.modified_count > 0

@@ -17,6 +17,7 @@ class Media:
     url: str = None
     time: int = 0
     user: str = None
+    user_id: int = None
     video: bool = False
 
 
@@ -33,5 +34,6 @@ class Track:
     time: int = 0
     thumbnail: str = None
     user: str = None
+    user_id: int = None
     view_count: str = None
     video: bool = False
