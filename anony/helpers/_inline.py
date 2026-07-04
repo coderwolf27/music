@@ -22,7 +22,7 @@ class Inline:
         self,
         chat_id: int,
         status: str = None,
-        timer: str = None,
+        timer: tuple = None,
         remove: bool = False,
         lyrics: bool = False,
     ) -> types.InlineKeyboardMarkup:
@@ -32,9 +32,7 @@ class Inline:
                 [self.ikb(text=status, callback_data=f"controls status {chat_id}")]
             )
         elif timer:
-            keyboard.append(
-                [self.ikb(text=timer, callback_data=f"controls status {chat_id}")]
-            )
+            keyboard.append(self._progress_row(chat_id, *timer))
 
         if not remove:
             keyboard.append(
@@ -51,6 +49,36 @@ class Inline:
                     [self._styled("Lyrics", "lyrics", enums.ButtonStyle.PRIMARY, f"lyrics {chat_id}")]
                 )
         return self.ikm(keyboard)
+
+    def _progress_row(
+        self, chat_id: int, played: int, duration: int, length: int = 8
+    ) -> list:
+        """
+        Real Bot API 9.4 coloured-button progress bar -- avoids relying on
+        emoji glyphs (which often render as flat/monochrome inside inline
+        button text on some clients, e.g. Desktop/Web). Filled segments are
+        native Telegram green, empty ones are native default/grey; both are
+        actual button backgrounds, not font-dependent characters.
+        """
+        import time as _time
+
+        cb = f"controls status {chat_id}"
+        pos = min(int((played / duration) * length), length) if duration else 0
+
+        elapsed = self.ikb(text=_time.strftime("%M:%S", _time.gmtime(played)), callback_data=cb)
+        remaining = self.ikb(
+            text=f"-{_time.strftime('%M:%S', _time.gmtime(max(duration - played, 0)))}",
+            callback_data=cb,
+        )
+        segments = [
+            self.ikb(
+                text="▬",
+                callback_data=cb,
+                style=enums.ButtonStyle.SUCCESS if i < pos else enums.ButtonStyle.DEFAULT,
+            )
+            for i in range(length)
+        ]
+        return [elapsed, *segments, remaining]
 
     def _styled(
         self, text: str, emoji_key: str, style: "enums.ButtonStyle", callback_data: str

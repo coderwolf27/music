@@ -3,13 +3,12 @@
 # This file is part of EarBudBot
 
 
-import time
 import asyncio
 
 from pyrogram import enums, errors, filters, types
 
 from anony import anon, app, config, db, lang, queue, tasks, userbot, yt
-from anony.helpers import buttons, utils
+from anony.helpers import buttons
 
 
 @app.on_message(filters.video_chat_started, group=19)
@@ -67,7 +66,6 @@ async def update_timer(length=10, sleep=12):
                     continue
                 played = media.time
                 remaining = max(duration - played, 0)
-                timer = utils.progress_bar(played, duration, length)
 
                 if remaining <= 30:
                     next = queue.get_next(chat_id, check=True)
@@ -76,11 +74,9 @@ async def update_timer(length=10, sleep=12):
 
                 if remaining < 10:
                     remove = True
+                    timer = None
                 else:
-                    if config.THUMB_GEN:
-                        timer = f"{time.strftime('%M:%S', time.gmtime(played))} | {timer} | -{time.strftime('%M:%S', time.gmtime(remaining))}"
-                    else:
-                        timer = None
+                    timer = (played, duration, length) if config.THUMB_GEN else None
                     remove = False
 
                 if not timer and not remove:
