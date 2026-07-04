@@ -1,19 +1,30 @@
 # EarBudBot Upgrade Pack
 
-Changes on top of upstream `AnonymousX1025/EarBudBot`. Everything here is additive —
+Changes on top of upstream `AnonymousX1025/AnonXMusic`. Everything here is additive —
 no existing commands, DB schema, or config were removed, so it's a drop-in update.
 
-## 1. Colour-coded control buttons
-`anony/helpers/_inline.py` → `Inline.controls()`
+## 1. Real coloured buttons (Bot API 9.4)
+`anony/helpers/_inline.py` → `Inline.controls()`, `vskip_markup()`, `settings_markup()`, `start_key()`
 
-Telegram's Bot API has **no way to set actual colours on inline buttons** — that's
-entirely up to the user's client theme. What we can do (and now do) is prefix each
-button with a coloured-circle emoji so the row reads visually at a glance:
+Telegram added actual button colours in **Bot API 9.4** (Feb 2026): a `style` field
+(`primary` = blue, `danger` = red, `success` = green) plus an `icon_custom_emoji_id`
+field for a small emoji icon before the button text. `kurigram` (the Pyrogram fork
+this project uses) already supports both natively — no raw MTProto calls needed.
 
-```
-🟢 ▶️   🟠 ⏸   🔁   ⏭ 🔵   ⏹ 🔴
-resume  pause  replay  skip   stop
-```
+Applied:
+- Now Playing controls: ▶️ resume = green, ⏸/🔁/⏭ = blue, ⏹ stop = red.
+- `/vskip` button turns red once the vote threshold is reached.
+- `/settings` toggles: green "On" / red "Off" (this also fixed a pre-existing bug
+  where the toggle button literally displayed the Python text `True`/`False`).
+- `/start`'s "Add me to a group" button is now green.
+
+**Icon caveat:** `icon_custom_emoji_id` on buttons only renders if the *bot's
+owner account* (the one that created the bot via @BotFather) has an active
+Telegram Premium subscription, or the bot purchased extra usernames via
+Fragment. This is separate from your assistant/session account's Premium
+status. Icons are populated from the same `emoji_pack.json` as the caption
+branding (see #3) — if a given key isn't in there, the button just renders
+with color and no icon, nothing breaks.
 
 ## 2. Live progress bar
 `anony/helpers/_utilities.py` → `Utilities.progress_bar()`
@@ -27,13 +38,14 @@ Replaced the old `——◉———` ASCII bar with a coloured block-emoji bar:
 `anony/helpers/_emoji.py` (new) — `PremiumEmoji` class, exposed as `pemoji` from
 `anony.helpers`.
 
-**Important limitation:** custom/premium emoji can only appear in message
-**text/captions** (via Pyrogram's `<emoji id="...">` HTML tag) — Telegram does not
-support entities inside inline button labels, so buttons stay on plain unicode
-emoji (see #1). `pemoji.tag("music")` is now used to brand the "Now Streaming"
-header in the play card and the "Queue" header in `/queue`. If no emoji ID is
-configured for a given key, or your account isn't Premium, it silently falls back
-to a plain unicode emoji — nothing breaks either way.
+Used two ways now:
+- **In message text/captions** via Pyrogram's `<emoji id="...">` HTML tag —
+  `pemoji.tag("music")` brands the "Now Streaming" header and `/queue` header.
+- **Directly on buttons** via the new `icon_custom_emoji_id` field (see #1) —
+  subject to the Premium-owner/Fragment caveat noted above.
+
+If no emoji ID is configured for a given key, both paths fall back to a plain
+unicode emoji — nothing breaks either way.
 
 **Setup:** run `scripts/get_emoji_ids.py` once, using your Premium account's
 session string (full instructions are in the script's docstring — set

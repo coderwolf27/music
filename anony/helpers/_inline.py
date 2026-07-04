@@ -3,10 +3,11 @@
 # This file is part of EarBudBot
 
 
-from pyrogram import types
+from pyrogram import enums, types
 
 from anony import app, config, lang
 from anony.core.lang import lang_codes
+from ._emoji import pemoji
 
 
 class Inline:
@@ -38,28 +39,44 @@ class Inline:
         if not remove:
             keyboard.append(
                 [
-                    self.ikb(text="🟢 ▶️", callback_data=f"controls resume {chat_id}"),
-                    self.ikb(text="🟠 ⏸", callback_data=f"controls pause {chat_id}"),
-                    self.ikb(text="🔁", callback_data=f"controls replay {chat_id}"),
-                    self.ikb(text="⏭ 🔵", callback_data=f"controls skip {chat_id}"),
-                    self.ikb(text="⏹ 🔴", callback_data=f"controls stop {chat_id}"),
+                    self._styled("▶️", "play", enums.ButtonStyle.SUCCESS, f"controls resume {chat_id}"),
+                    self._styled("⏸", "pause", enums.ButtonStyle.PRIMARY, f"controls pause {chat_id}"),
+                    self._styled("🔁", "replay", enums.ButtonStyle.PRIMARY, f"controls replay {chat_id}"),
+                    self._styled("⏭", "skip", enums.ButtonStyle.PRIMARY, f"controls skip {chat_id}"),
+                    self._styled("⏹", "stop", enums.ButtonStyle.DANGER, f"controls stop {chat_id}"),
                 ]
             )
             if lyrics:
                 keyboard.append(
-                    [self.ikb(text="🎤 Lyrics", callback_data=f"lyrics {chat_id}")]
+                    [self._styled("Lyrics", "lyrics", enums.ButtonStyle.PRIMARY, f"lyrics {chat_id}")]
                 )
         return self.ikm(keyboard)
+
+    def _styled(
+        self, text: str, emoji_key: str, style: "enums.ButtonStyle", callback_data: str
+    ) -> types.InlineKeyboardButton:
+        """Build a coloured button (Bot API 9.4+), optionally with a premium
+        emoji icon if one is configured in emoji_pack.json for `emoji_key`.
+        Falls back gracefully to a plain-coloured button with no icon."""
+        return self.ikb(
+            text=text,
+            callback_data=callback_data,
+            style=style,
+            icon_custom_emoji_id=pemoji.ids.get(emoji_key),
+        )
 
     def vskip_markup(
         self, chat_id: int, votes: int, needed: int
     ) -> types.InlineKeyboardMarkup:
+        style = enums.ButtonStyle.DANGER if votes >= needed else enums.ButtonStyle.PRIMARY
         return self.ikm(
             [
                 [
                     self.ikb(
                         text=f"🗳 Vote to Skip ({votes}/{needed})",
                         callback_data=f"vskip {chat_id}",
+                        style=style,
+                        icon_custom_emoji_id=pemoji.ids.get("vote"),
                     )
                 ]
             ]
@@ -125,6 +142,7 @@ class Inline:
     def settings_markup(
         self, lang: dict, admin_only: bool, cmd_delete: bool, language: str, chat_id: int
     ) -> types.InlineKeyboardMarkup:
+        on_style, off_style = enums.ButtonStyle.SUCCESS, enums.ButtonStyle.DANGER
         return self.ikm(
             [
                 [
@@ -132,21 +150,33 @@ class Inline:
                         text=lang["play_mode"] + " ➜",
                         callback_data="settings",
                     ),
-                    self.ikb(text=admin_only, callback_data="settings play"),
+                    self.ikb(
+                        text="✅ On" if admin_only else "❌ Off",
+                        callback_data="settings play",
+                        style=on_style if admin_only else off_style,
+                    ),
                 ],
                 [
                     self.ikb(
                         text=lang["cmd_delete"] + " ➜",
                         callback_data="settings",
                     ),
-                    self.ikb(text=cmd_delete, callback_data="settings delete"),
+                    self.ikb(
+                        text="✅ On" if cmd_delete else "❌ Off",
+                        callback_data="settings delete",
+                        style=on_style if cmd_delete else off_style,
+                    ),
                 ],
                 [
                     self.ikb(
                         text=lang["language"] + " ➜",
                         callback_data="settings",
                     ),
-                    self.ikb(text=lang_codes[language], callback_data="language"),
+                    self.ikb(
+                        text=lang_codes[language],
+                        callback_data="language",
+                        style=enums.ButtonStyle.PRIMARY,
+                    ),
                 ],
             ]
         )
@@ -159,6 +189,7 @@ class Inline:
                 self.ikb(
                     text=lang["add_me"],
                     url=f"https://t.me/{app.username}?startgroup=true",
+                    style=enums.ButtonStyle.SUCCESS,
                 )
             ],
             [self.ikb(text=lang["help"], callback_data="help")],
@@ -172,7 +203,7 @@ class Inline:
                 [
                     self.ikb(
                         text=lang["source"],
-                        url="https://github.com/AnonymousX1025/EarBudBot",
+                        url="https://github.com/coderwolf27/music",
                     )
                 ]
             ]

@@ -72,3 +72,8 @@ class PremiumEmoji:
     def raw(self, name: str) -> str:
         """Plain unicode fallback only -- safe for button labels."""
         return DEFAULTS.get(name, "•")
+
+
+# Module-level singleton -- imported directly by _inline.py (and re-exported
+# from helpers/__init__.py) to avoid a circular import at package init time.
+pemoji = PremiumEmoji()
