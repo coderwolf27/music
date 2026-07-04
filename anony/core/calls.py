@@ -15,6 +15,13 @@ from anony import (app, config, db, lang, logger,
                    queue, thumb, userbot, yt)
 from anony.helpers import Media, Track, buttons, pemoji
 
+_AUDIO_QUALITY_MAP = {
+    "LOW": types.AudioQuality.LOW,
+    "MEDIUM": types.AudioQuality.MEDIUM,
+    "HIGH": types.AudioQuality.HIGH,
+    "STUDIO": types.AudioQuality.STUDIO,
+}
+
 
 class TgCall(PyTgCalls):
     def __init__(self):
@@ -63,7 +70,7 @@ class TgCall(PyTgCalls):
 
         stream = types.MediaStream(
             media_path=media.file_path,
-            audio_parameters=types.AudioQuality.HIGH,
+            audio_parameters=_AUDIO_QUALITY_MAP.get(config.AUDIO_QUALITY, types.AudioQuality.HIGH),
             video_parameters=types.VideoQuality.HD_720p,
             audio_flags=types.MediaStream.Flags.REQUIRED,
             video_flags=(

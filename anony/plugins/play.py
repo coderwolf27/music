@@ -8,7 +8,7 @@ from pathlib import Path
 from pyrogram import filters, types
 
 from anony import anon, app, config, db, lang, queue, tg, yt
-from anony.helpers import buttons, utils
+from anony.helpers import buttons, pemoji, utils
 from anony.helpers._play import checkUB
 
 
@@ -36,6 +36,18 @@ async def play_hndlr(
     url: str = None,
 ) -> None:
     sent = await m.reply_text(m.lang["play_searching"])
+
+    if (
+        config.MAX_CONCURRENT_CALLS
+        and not await db.get_call(m.chat.id)
+        and len(db.active_calls) >= config.MAX_CONCURRENT_CALLS
+    ):
+        return await sent.edit_text(
+            f'{pemoji.tag("logo")} I\'m at my capacity of '
+            f"{config.MAX_CONCURRENT_CALLS} groups streaming at once right now "
+            f"-- please try again in a few minutes once one frees up."
+        )
+
     file = None
     mention = m.from_user.mention
     media = tg.get_media(m.reply_to_message) if m.reply_to_message else None

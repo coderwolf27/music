@@ -11,7 +11,7 @@ Supports YouTube, Spotify, Resso, Apple Music, SoundCloud and M3U8 links.
 <a href="https://github.com/coderwolf27/music/network/members">
     <img src="https://img.shields.io/github/forks/coderwolf27/music?color=blueviolet&logo=github&logoColor=black&style=for-the-badge" alt="Forks"/>
 </a>
-<a href="https://github.com/coderwolf27/music/blob/master/LICENSE">
+<a href="https://github.com/coderwolf27/music/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License"/>
 </a>
 <a href="https://www.python.org/">
@@ -19,7 +19,7 @@ Supports YouTube, Spotify, Resso, Apple Music, SoundCloud and M3U8 links.
 </a>
 <br>
 
-<img src="https://github.com/coderwolf27/music/blob/master/.github/anonx.jpg" width="720" height="auto">
+<img src="https://github.com/coderwolf27/music/blob/main/.github/anonx.jpg" width="720" height="auto">
 
 EarBudBot lets you stream high-quality and low-latency audio and video playback into telegram group video chats.<br>
 Built with Python, Pyrogram, and Py-TgCalls, it’s optimized for reliability and easy deployment on Heroku, VPS, or Docker.
@@ -29,10 +29,14 @@ Built with Python, Pyrogram, and Py-TgCalls, it’s optimized for reliability an
 
 <h2>✨ This fork</h2>
 
-This fork adds coloured control buttons, custom premium emoji branding, a live
-block-emoji progress bar, a <code>/lyrics</code> command, and a <code>/vskip</code>
-vote-to-skip command. See <a href="https://github.com/coderwolf27/music/blob/main/UPGRADE_NOTES.md">UPGRADE_NOTES.md</a>
-for the full rundown and setup steps.
+This fork adds real Telegram Bot API 9.4 coloured control buttons, custom
+premium emoji branding throughout, a live line-style progress bar, a
+<code>/lyrics</code> command, a <code>/vskip</code> vote-to-skip command,
+per-chat leaderboards (<code>/topsongs</code>, <code>/topusers</code>), and a
+personal favorites system (<code>/fav</code>, <code>/favs</code>,
+<code>/playfav</code>, <code>/unfav</code>). See
+<a href="https://github.com/coderwolf27/music/blob/main/UPGRADE_NOTES.md">UPGRADE_NOTES.md</a>
+for the full rundown, setup steps, and a running history of every change.
 
 <hr>
 
@@ -51,7 +55,7 @@ for the full rundown and setup steps.
 
 - <a href="https://www.python.org">Python 3.10+</a> installed  
 - <a href="https://deno.com/">deno</a> & <a href="https://ffmpeg.org/">ffmpeg</a> installed on your system  
-- Required variables mentioned in <a href="https://github.com/coderwolf27/music/blob/master/sample.env">sample.env</a>
+- Required variables mentioned in <a href="https://github.com/coderwolf27/music/blob/main/sample.env">sample.env</a>
 
 <details>
     <summary>
@@ -131,7 +135,7 @@ MONGO_URL=mongodb+srv://
 SESSION=BQgfh...AA
 ```
 
-> 📝 Check <a href="https://github.com/coderwolf27/music/blob/master/config.py">config.py</a> for all available options.
+> 📝 Check <a href="https://github.com/coderwolf27/music/blob/main/config.py">config.py</a> for all available options.
 </details>
 
 <hr>
@@ -153,7 +157,14 @@ SESSION=BQgfh...AA
 /seek -> Seeks the stream
 /queue -> Show queue
 /lyrics [song] -> Fetch lyrics for a song
-/vskip -> Vote to skip the current track
+/vskip -> Vote to skip the current track (any member, not just admins)
+/topsongs -> Most-played tracks in this chat
+/topusers -> Who's requested the most songs in this chat
+/fav -> Save the currently playing track to your favorites
+/favs -> View your saved favorites (works in DM or group)
+/playfav [number] -> Queue a favorite back into this group
+/unfav [number] -> Remove a track from your favorites
+/stats -> Bot stats (now works in DM too, not just groups)
     </pre>
 </details>
 
@@ -173,7 +184,7 @@ Contributions are welcome!
 
 <h2>🗒️ License</h2>
 
-This project is licensed under the <b>MIT License</b> — see <a href="https://github.com/coderwolf27/music/blob/master/LICENSE">LICENSE</a> for details.
+This project is licensed under the <b>MIT License</b> — see <a href="https://github.com/coderwolf27/music/blob/main/LICENSE">LICENSE</a> for details.
 
 <hr>
 
