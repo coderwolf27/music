@@ -102,7 +102,7 @@ class TgCall(PyTgCalls):
                     media.duration,
                     media.user,
                 )
-                keyboard = buttons.controls(chat_id, lyrics=isinstance(media, Track))
+                keyboard = buttons.controls(chat_id, share=isinstance(media, Track))
                 try:
                     if _thumb:
                         await message.edit_media(

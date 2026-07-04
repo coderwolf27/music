@@ -24,7 +24,7 @@ class Inline:
         status: str = None,
         timer: tuple = None,
         remove: bool = False,
-        lyrics: bool = False,
+        share: bool = False,
     ) -> types.InlineKeyboardMarkup:
         keyboard = []
         if status:
@@ -44,9 +44,9 @@ class Inline:
                     self._styled("⏹", "stop", enums.ButtonStyle.DANGER, f"controls stop {chat_id}"),
                 ]
             )
-            if lyrics:
+            if share:
                 keyboard.append(
-                    [self._styled("Lyrics", "lyrics", enums.ButtonStyle.PRIMARY, f"lyrics {chat_id}")]
+                    [self._styled("📤 Share", "logo", enums.ButtonStyle.PRIMARY, f"share {chat_id}")]
                 )
         return self.ikm(keyboard)
 

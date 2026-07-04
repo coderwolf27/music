@@ -70,11 +70,11 @@ session string (instructions in the script's docstring), or just hand-edit
 `anony/plugins/lyrics.py`
 
 - `/lyrics <song name>` or just `/lyrics` while something is playing.
-- A "Lyrics" button is added under the controls row whenever a
-  YouTube-searched track (not a replied-file/M3U8 stream) starts playing.
 - Pulls plain lyrics from lrclib.net — free, keyless API. If nothing is
   found it says so instead of guessing.
 - Toggle with LYRICS_ENABLED=False in your .env.
+- (Was also auto-added as a button under Now Playing controls; removed in
+  #10 per feedback -- the command still works standalone.)
 
 ## 5. /vskip - vote to skip (new)
 `anony/plugins/vskip.py`
@@ -145,6 +145,20 @@ worse with many (6+) concurrent group streams on a 2 vCPU VPS.
 - Fixed a few stale github.com/.../blob/master/... links in README.md
   (this repo's default branch is main).
 
+## 10. Shareable Now Playing card (new), Lyrics button removed
+`anony/plugins/share.py` (new), `anony/helpers/_inline.py`, `anony/core/calls.py`
+
+- The "Lyrics" button that auto-appeared under Now Playing controls was
+  removed (per feedback -- found it more annoying than useful). The
+  `/lyrics` command itself still works fine, just standalone now.
+- Replaced with a "📤 Share" button (only shown for YouTube-searched
+  tracks). Tapping it reuses the existing thumbnail generator
+  (`anony/helpers/_thumbnails.py`) to post a standalone, branded photo
+  card into the chat -- title, EarBudBot branding, and an "Add me to your
+  group" button -- that anyone can then forward to their own story or
+  another chat. No new image-generation code, just repackaging what
+  `Thumbnail.generate()` already builds for the Now Playing card.
+
 ## New config keys
 All optional, sane defaults, add to .env only if you want to change them:
 ```
@@ -181,6 +195,7 @@ AUDIO_QUALITY=HIGH
  anony/plugins/misc.py       (progress bar uses new helper)
  anony/plugins/play.py       (user_id tracking, concurrency cap check)
  anony/plugins/queue.py      (queue header + live bar)
+ anony/plugins/share.py      (NEW - shareable Now Playing card button)
  anony/plugins/stats.py      (private-chat fix, medal icon)
  anony/plugins/start.py      (welcome message emoji, help header)
  anony/plugins/vskip.py      (NEW - /vskip command)
