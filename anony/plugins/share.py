@@ -5,7 +5,7 @@
 
 from pyrogram import filters, types
 
-from anony import app, queue, thumb
+from anony import app, logger, queue, thumb
 from anony.helpers import Track, pemoji
 
 
@@ -25,29 +25,33 @@ async def _share_card(_, query: types.CallbackQuery):
         image = await thumb.generate_share_card(
             media, app.name, app.username, elapsed=media.time
         )
-    except Exception:
-        return await query.answer(
-            "Couldn't generate a card right now, try again in a bit.",
-            show_alert=True,
-        )
 
-    caption = (
-        f'{pemoji.tag("logo")} <b>{media.title}</b>\n'
-        f'{pemoji.tag("music")} Streaming now on <b>{app.name}</b> {pemoji.tag("shining_heart")}\n\n'
-        f"Tap and hold to save, then share it to your story! 📤"
-    )
-    await query.message.reply_photo(
-        photo=image,
-        caption=caption,
-        reply_markup=types.InlineKeyboardMarkup(
-            [
+        caption = (
+            f'{pemoji.tag("logo")} <b>{media.title}</b>\n'
+            f'{pemoji.tag("music")} Streaming now on <b>{app.name}</b> {pemoji.tag("shining_heart")}\n\n'
+            f"Tap and hold to save, then share it to your story! 📤"
+        )
+        await query.message.reply_photo(
+            photo=image,
+            caption=caption,
+            reply_markup=types.InlineKeyboardMarkup(
                 [
-                    types.InlineKeyboardButton(
-                        text=f"🎧 Add {app.name} to your group",
-                        url=f"https://t.me/{app.username}?startgroup=true",
-                    )
+                    [
+                        types.InlineKeyboardButton(
+                            text=f"🎧 Add {app.name} to your group",
+                            url=f"https://t.me/{app.username}?startgroup=true",
+                        )
+                    ]
                 ]
-            ]
-        ),
-        quote=False,
-    )
+            ),
+            quote=False,
+        )
+    except Exception as ex:
+        logger.warning("Share card failed: %s", ex)
+        try:
+            await query.message.reply_text(
+                "Couldn't generate a share card right now -- try again in a bit.",
+                quote=False,
+            )
+        except Exception:
+            pass
