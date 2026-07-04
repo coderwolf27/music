@@ -32,9 +32,10 @@ Built with Python, Pyrogram, and Py-TgCalls, it’s optimized for reliability an
 This fork adds real Telegram Bot API 9.4 coloured control buttons, custom
 premium emoji branding throughout, a live line-style progress bar, a
 <code>/lyrics</code> command, a <code>/vskip</code> vote-to-skip command,
-per-chat leaderboards (<code>/topsongs</code>, <code>/topusers</code>), and a
+per-chat leaderboards (<code>/topsongs</code>, <code>/topusers</code>), a
 personal favorites system (<code>/fav</code>, <code>/favs</code>,
-<code>/playfav</code>, <code>/unfav</code>). See
+<code>/playfav</code>, <code>/unfav</code>), and a shareable "Now Playing"
+card (📤 button) people can post to their own Telegram Story. See
 <a href="https://github.com/coderwolf27/music/blob/main/UPGRADE_NOTES.md">UPGRADE_NOTES.md</a>
 for the full rundown, setup steps, and a running history of every change.
 
@@ -45,6 +46,8 @@ for the full rundown, setup steps, and a running history of every change.
 - 🎧 Stream low-latency audio in real time to <b>Telegram group video chats</b>
 - 🌐 Supports multiple platforms like <b>YouTube, Spotify, Apple Music, SoundCloud</b>
 - ⚡ Advanced queue management with auto-play
+- 🏆 Per-chat leaderboards and personal favorites
+- 📤 Shareable "Now Playing" cards for Telegram Stories
 - ⚙️ Easy deployment — works on Local, VPS, or Heroku
 - ❤️ Built with Python
 <hr>
