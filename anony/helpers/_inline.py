@@ -51,34 +51,27 @@ class Inline:
         return self.ikm(keyboard)
 
     def _progress_row(
-        self, chat_id: int, played: int, duration: int, length: int = 8
+        self, chat_id: int, played: int, duration: int, length: int = 20
     ) -> list:
         """
-        Real Bot API 9.4 coloured-button progress bar -- avoids relying on
-        emoji glyphs (which often render as flat/monochrome inside inline
-        button text on some clients, e.g. Desktop/Web). Filled segments are
-        native Telegram green, empty ones are native default/grey; both are
-        actual button backgrounds, not font-dependent characters.
+        Single continuous line-style progress bar (like a media seek bar),
+        built entirely from line-drawing / plain text characters -- no
+        emoji, no button colour. Renders identically on every client since
+        it doesn't depend on colour-emoji font support at all.
         """
         import time as _time
 
         cb = f"controls status {chat_id}"
-        pos = min(int((played / duration) * length), length) if duration else 0
+        pos = min(int((played / duration) * length), length - 1) if duration else 0
+        bar = "━" * pos + "●" + "─" * (length - pos - 1)
 
         elapsed = self.ikb(text=_time.strftime("%M:%S", _time.gmtime(played)), callback_data=cb)
+        line = self.ikb(text=bar, callback_data=cb)
         remaining = self.ikb(
             text=f"-{_time.strftime('%M:%S', _time.gmtime(max(duration - played, 0)))}",
             callback_data=cb,
         )
-        segments = [
-            self.ikb(
-                text="▬",
-                callback_data=cb,
-                style=enums.ButtonStyle.SUCCESS if i < pos else enums.ButtonStyle.DEFAULT,
-            )
-            for i in range(length)
-        ]
-        return [elapsed, *segments, remaining]
+        return [elapsed, line, remaining]
 
     def _styled(
         self, text: str, emoji_key: str, style: "enums.ButtonStyle", callback_data: str
