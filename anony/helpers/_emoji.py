@@ -30,6 +30,12 @@ DEFAULTS = {
     "lyrics": "📝",
     "sparkle": "✨",
     "link": "🔗",
+    "medal": "🏅",
+    "flag": "🎌",
+    "flower": "🌸",
+    "grow": "🌱",
+    "logo": "🎧",
+    "shining_heart": "💖",
 }
 
 
@@ -37,16 +43,17 @@ class PremiumEmoji:
     """
     Thin wrapper around Telegram custom (premium) emoji.
 
-    Custom emoji can only be embedded in message TEXT/CAPTIONS (via the
-    `<emoji id="...">` HTML tag that Pyrogram's HTML parser understands),
-    never inside inline button labels -- Telegram's Bot API does not support
-    entities on button text, only plain unicode. Buttons get colour-coded
-    unicode emoji instead (see helpers/_inline.py); this class handles the
-    "real" premium emoji used in Now Playing cards, /start, /help, etc.
+    Custom emoji can be embedded in message TEXT/CAPTIONS (via the
+    `<emoji id="...">` HTML tag that Pyrogram's HTML parser understands) via
+    `.tag()`, and -- since Bot API 9.4 -- directly on inline buttons via the
+    `icon_custom_emoji_id` field (see helpers/_inline.py's `_styled()`); use
+    `.ids.get(name)` for that. Buttons additionally get a `style` colour
+    (primary/danger/success), which is a separate Bot API 9.4 field.
 
     IDs are loaded from `emoji_pack.json` in the project root. Populate that
     file by running `scripts/get_emoji_ids.py` with a Premium account's
-    session string (see that script's docstring for instructions).
+    session string (see that script's docstring for instructions), or just
+    hand-edit it with IDs Telegram gives you directly.
     """
 
     def __init__(self, path: str = "emoji_pack.json"):

@@ -12,6 +12,7 @@ from pyrogram import __version__, filters, types
 from pytgcalls import __version__ as pytgver
 
 from anony import app, config, db, lang, userbot
+from anony.helpers import pemoji
 from anony.plugins import all_modules
 
 
@@ -24,7 +25,7 @@ async def _stats(_, m: types.Message):
     )
 
     pid = os.getpid()
-    _utext = m.lang["stats_user"].format(
+    _utext = f'{pemoji.tag("medal")} ' + m.lang["stats_user"].format(
         app.name,
         len(userbot.clients),
         config.AUTO_LEAVE,

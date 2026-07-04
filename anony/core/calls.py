@@ -83,8 +83,8 @@ class TgCall(PyTgCalls):
                 media.time = 1
                 await db.add_call(chat_id)
                 header = (
-                    f'{pemoji.tag("music")} <b>Now Streaming</b> '
-                    f'{pemoji.tag("sparkle")}\n\n'
+                    f'{pemoji.tag("logo")} <b>Now Streaming</b> '
+                    f'{pemoji.tag("shining_heart")}\n\n'
                 )
                 text = header + _lang["play_media"].format(
                     media.url,

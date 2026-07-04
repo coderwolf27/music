@@ -23,7 +23,7 @@ async def _queue_func(_, m: types.Message):
         if isinstance(_media, Track)
         else config.DEFAULT_THUMB
     ) if config.THUMB_GEN else None
-    header = f'{pemoji.tag("queue")} <b>Queue</b>\n\n'
+    header = f'{pemoji.tag("logo")} <b>Queue</b>\n\n'
     _text = header + m.lang["queue_curr"].format(
         _media.url,
         _media.title[:50],

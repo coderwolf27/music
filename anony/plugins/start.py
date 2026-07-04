@@ -6,14 +6,14 @@ import asyncio
 from pyrogram import enums, filters, types
 
 from anony import app, config, db, lang
-from anony.helpers import buttons, utils
+from anony.helpers import buttons, pemoji, utils
 
 
 @app.on_message(filters.command(["help"]) & filters.private & ~app.bl_users)
 @lang.language()
 async def _help(_, m: types.Message):
     await m.reply_text(
-        text=m.lang["help_menu"],
+        text=f'{pemoji.tag("logo")} {m.lang["help_menu"]}',
         reply_markup=buttons.help_markup(m.lang),
         quote=True,
     )
@@ -30,9 +30,11 @@ async def start(_, message: types.Message):
 
     private = message.chat.type == enums.ChatType.PRIVATE
     _text = (
-        message.lang["start_pm"].format(message.from_user.first_name, app.name)
+        message.lang["start_pm"].format(
+            message.from_user.first_name, app.name, pemoji.tag("flower")
+        )
         if private
-        else message.lang["start_gp"].format(app.name)
+        else message.lang["start_gp"].format(app.name, pemoji.tag("flower"))
     )
 
     key = buttons.start_key(message.lang, private)

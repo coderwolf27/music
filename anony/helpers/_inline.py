@@ -76,7 +76,7 @@ class Inline:
                         text=f"🗳 Vote to Skip ({votes}/{needed})",
                         callback_data=f"vskip {chat_id}",
                         style=style,
-                        icon_custom_emoji_id=pemoji.ids.get("vote"),
+                        icon_custom_emoji_id=pemoji.ids.get("grow"),
                     )
                 ]
             ]
@@ -176,6 +176,7 @@ class Inline:
                         text=lang_codes[language],
                         callback_data="language",
                         style=enums.ButtonStyle.PRIMARY,
+                        icon_custom_emoji_id=pemoji.ids.get("flag"),
                     ),
                 ],
             ]
@@ -190,6 +191,7 @@ class Inline:
                     text=lang["add_me"],
                     url=f"https://t.me/{app.username}?startgroup=true",
                     style=enums.ButtonStyle.SUCCESS,
+                    icon_custom_emoji_id=pemoji.ids.get("heart"),
                 )
             ],
             [self.ikb(text=lang["help"], callback_data="help")],
@@ -208,7 +210,15 @@ class Inline:
                 ]
             ]
         else:
-            rows += [[self.ikb(text=lang["language"], callback_data="language")]]
+            rows += [
+                [
+                    self.ikb(
+                        text=lang["language"],
+                        callback_data="language",
+                        icon_custom_emoji_id=pemoji.ids.get("flag"),
+                    )
+                ]
+            ]
         return self.ikm(rows)
 
     def yt_key(self, link: str) -> types.InlineKeyboardMarkup:
