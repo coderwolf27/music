@@ -15,6 +15,20 @@ class Inline:
         self.ikm = types.InlineKeyboardMarkup
         self.ikb = types.InlineKeyboardButton
 
+    def start_in_pm_key(self, bot_username: str) -> types.InlineKeyboardMarkup:
+        return self.ikm(
+            [
+                [
+                    self.ikb(
+                        text="🚀 Start in PM",
+                        url=f"https://t.me/{bot_username}?start=help",
+                        style=enums.ButtonStyle.PRIMARY,
+                        icon_custom_emoji_id=pemoji.ids.get("logo"),
+                    )
+                ]
+            ]
+        )
+
     def cancel_dl(self, text) -> types.InlineKeyboardMarkup:
         return self.ikm([[self.ikb(text=text, callback_data=f"cancel_dl")]])
 

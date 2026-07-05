@@ -29,27 +29,23 @@ async def start(_, message: types.Message):
         return await _help(_, message)
 
     private = message.chat.type == enums.ChatType.PRIVATE
-    _text = (
-        message.lang["start_pm"].format(
+
+    if private:
+        _text = message.lang["start_pm"].format(
             message.from_user.first_name,
             app.name,
             pemoji.tag("flower"),
             pemoji.tag("music"),
             pemoji.tag("teddy"),
         )
-        if private
-        else message.lang["start_gp"].format(
-            app.name, pemoji.tag("flower"), pemoji.tag("music"), pemoji.tag("teddy")
+        key = buttons.start_key(message.lang, private)
+        await message.reply_photo(
+            photo=config.START_IMG, caption=_text, reply_markup=key, quote=False
         )
-    )
-
-    key = buttons.start_key(message.lang, private)
-    await message.reply_photo(
-        photo=config.START_IMG,
-        caption=_text,
-        reply_markup=key,
-        quote=not private,
-    )
+    else:
+        _text = message.lang["start_gp"].format(message.from_user.first_name)
+        key = buttons.start_in_pm_key(app.username)
+        await message.reply_text(text=_text, reply_markup=key, quote=True)
 
     if private:
         if await db.is_user(message.from_user.id):
