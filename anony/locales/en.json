@@ -106,7 +106,7 @@
     "restarting": "Restarting...",
     "restarted": "Restart in progress. Don't worry, it'll only take a few seconds… maybe.",
     "start_pm": "{2} Hey {0}! Welcome to {1}~ I'm ready to sing for you! Let's make today sound amazing. {3}(•◡•)\n{4} Tap Help for my feature menu!",
-    "start_gp": "✨ Hello, {0} {1}❤️\n💮 Click below to explore my features! 🫱",
+    "start_gp": "{2} Hello, {0} {1}{3}\n{4} Click below to explore my features! 🫱",
     "start_settings": "<u><b>{0} settings</b></u>\n\nClick the buttons below to change this chat's current settings.",
     "stats_fetching": "Fetching stats...",
     "stats_sudo": "\n\n<b>Modules:</b> {0}\n<b>Platform:</b> {1}\n<b>Ram usage:</b> <code>{2}MB | {3}GB</code>\n<b>CPU usage:</b> <code>{4}% ({5} cores)</code>\n<b>Storage:</b> <code>{6}GB | {7}GB</code>\n\n<b>Python:</b> <code>v{8}</code>\n<b>Pyrogram:</b> <code>v{9}</code>\n<b>PyTgCalls:</b> <code>v{10}</code>",

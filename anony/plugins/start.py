@@ -44,7 +44,11 @@ async def start(_, message: types.Message):
         )
     else:
         _text = message.lang["start_gp"].format(
-            message.from_user.first_name, pemoji.tag("hi")
+            message.from_user.first_name,
+            pemoji.tag("hi"),
+            pemoji.tag("shine"),
+            pemoji.tag("heart"),
+            pemoji.tag("flower"),
         )
         key = buttons.start_in_pm_key(app.username)
         await message.reply_text(text=_text, reply_markup=key, quote=True)

@@ -20,7 +20,7 @@ class Inline:
             [
                 [
                     self.ikb(
-                        text="🚀 Start in PM",
+                        text="Start in PM",
                         url=f"https://t.me/{bot_username}?start=help",
                         style=enums.ButtonStyle.PRIMARY,
                         icon_custom_emoji_id=pemoji.ids.get("logo"),
