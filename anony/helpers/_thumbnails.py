@@ -4,6 +4,7 @@
 
 
 import os
+import re
 import time
 import aiohttp
 from PIL import (Image, ImageDraw, ImageEnhance,
@@ -118,31 +119,47 @@ class Thumbnail:
             bg = ImageEnhance.Brightness(bg).enhance(0.35)
             card = bg.convert("RGBA")
 
-            # Rounded square album art, centered
-            art_size = 820
+            # Large, near-edge-to-edge album art
+            margin = 40
+            art_size = W - margin * 2  # 1000px -- fills almost the full width
+            art_top = 90
             art = ImageOps.fit(
                 cover, (art_size, art_size), method=Image.LANCZOS, centering=(0.5, 0.5)
             )
             art_mask = Image.new("L", (art_size, art_size), 0)
             ImageDraw.Draw(art_mask).rounded_rectangle(
-                (0, 0, art_size, art_size), radius=36, fill=255
+                (0, 0, art_size, art_size), radius=40, fill=255
             )
             art.putalpha(art_mask)
-            art_x = (W - art_size) // 2
-            card.paste(art, (art_x, 200), art)
+            card.paste(art, (margin, art_top), art)
 
             draw = ImageDraw.Draw(card)
 
-            title = truncate(draw, song.title, self.card_title_font, W - 120)
-            centered(draw, 1070, title, self.card_title_font)
+            # "NOW PLAYING" badge -- fills the gap under the art and sets context
+            badge_y = art_top + art_size + 40
+            badge_text = "NOW PLAYING"
+            badge_bbox = draw.textbbox((0, 0), badge_text, font=self.card_sub_font)
+            badge_w = (badge_bbox[2] - badge_bbox[0]) + 60
+            badge_h = 60
+            badge_x = (W - badge_w) // 2
+            draw.rounded_rectangle(
+                (badge_x, badge_y, badge_x + badge_w, badge_y + badge_h),
+                radius=30, fill=(15, 15, 25, 200),
+            )
+            centered(draw, badge_y + 14, badge_text, self.card_sub_font)
 
+            title_y = badge_y + badge_h + 45
+            title = truncate(draw, song.title, self.card_title_font, W - 120)
+            centered(draw, title_y, title, self.card_title_font)
+
+            subtitle_y = title_y + 85
             subtitle = truncate(
                 draw, song.channel_name or "", self.card_sub_font, W - 160
             )
-            centered(draw, 1150, subtitle, self.card_sub_font, fill=(210, 210, 210))
+            centered(draw, subtitle_y, subtitle, self.card_sub_font, fill=(210, 210, 210))
 
             # Progress line
-            bar_y = 1240
+            bar_y = subtitle_y + 110
             pos = min(elapsed / song.duration_sec, 1.0) if song.duration_sec else 0
             bar_x1, bar_x2 = 140, W - 140
             fill_x = bar_x1 + int((bar_x2 - bar_x1) * pos)
@@ -160,19 +177,25 @@ class Thumbnail:
             )
 
             if song.user:
+                # song.user is a Pyrogram mention string with raw HTML
+                # (e.g. '<a href="tg://user?id=...">Name</a>') -- PIL draws
+                # literal characters, it doesn't parse HTML, so this must be
+                # stripped down to plain text before drawing.
+                plain_name = re.sub(r"<[^>]+>", "", song.user).strip() or "Someone"
                 centered(
-                    draw, bar_y + 90, f"Requested by {song.user}",
+                    draw, bar_y + 90, f"Requested by {plain_name}",
                     self.card_sub_font, fill=(200, 200, 200),
                 )
 
-            # Bottom branding bar
-            brand_y = H - 220
+            # Bottom branding bar -- more padding, better vertical centering
+            brand_h = 190
+            brand_y = H - brand_h - 70
             draw.rounded_rectangle(
-                (60, brand_y, W - 60, H - 80), radius=30, fill=(20, 20, 30, 235)
+                (60, brand_y, W - 60, brand_y + brand_h), radius=30, fill=(20, 20, 30, 235)
             )
-            centered(draw, brand_y + 35, bot_name, self.card_brand_font)
+            centered(draw, brand_y + 48, bot_name, self.card_brand_font)
             centered(
-                draw, brand_y + 95, f"t.me/{bot_username} — stream music together",
+                draw, brand_y + 108, f"t.me/{bot_username} — stream music together",
                 self.card_sub_font, fill=(190, 190, 190),
             )
 
