@@ -43,7 +43,9 @@ async def start(_, message: types.Message):
             photo=config.START_IMG, caption=_text, reply_markup=key, quote=False
         )
     else:
-        _text = message.lang["start_gp"].format(message.from_user.first_name)
+        _text = message.lang["start_gp"].format(
+            message.from_user.first_name, pemoji.tag("hi")
+        )
         key = buttons.start_in_pm_key(app.username)
         await message.reply_text(text=_text, reply_markup=key, quote=True)
 

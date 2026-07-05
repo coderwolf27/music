@@ -35,7 +35,7 @@ async def play_hndlr(
     video: bool = False,
     url: str = None,
 ) -> None:
-    sent = await m.reply_text(m.lang["play_searching"])
+    sent = await m.reply_text(f'{pemoji.tag("loading")} {m.lang["play_searching"]}')
 
     if (
         config.MAX_CONCURRENT_CALLS
@@ -133,7 +133,7 @@ async def play_hndlr(
         if Path(fname).exists():
             file.file_path = fname
         else:
-            await sent.edit_text(m.lang["play_downloading"])
+            await sent.edit_text(f'{pemoji.tag("loading")} {m.lang["play_downloading"]}')
             file.file_path = await yt.download(file.id, video=video)
 
     await anon.play_media(chat_id=m.chat.id, message=sent, media=file)

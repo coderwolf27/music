@@ -104,7 +104,7 @@ async def _playfav(_, m: types.Message):
         user_id=m.from_user.id,
     )
 
-    sent = await m.reply_text(m.lang["play_searching"])
+    sent = await m.reply_text(f'{pemoji.tag("loading")} {m.lang["play_searching"]}')
     position = queue.add(m.chat.id, track)
     if position != 0 or await db.get_call(m.chat.id):
         return await sent.edit_text(
@@ -118,7 +118,7 @@ async def _playfav(_, m: types.Message):
     if Path(fname).exists():
         track.file_path = fname
     else:
-        await sent.edit_text(m.lang["play_downloading"])
+        await sent.edit_text(f'{pemoji.tag("loading")} {m.lang["play_downloading"]}')
         track.file_path = await yt.download(track.id, video=False)
 
     await anon.play_media(chat_id=m.chat.id, message=sent, media=track)

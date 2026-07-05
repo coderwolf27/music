@@ -37,6 +37,19 @@ DEFAULTS = {
     "logo": "🎧",
     "shining_heart": "💖",
     "teddy": "🧸",
+    "verified": "☑️",
+    "ghost": "👻",
+    "lightning": "⚡",
+    "no": "🚫",
+    "two_hearts": "💕",
+    "loading": "⏳",
+    "shine": "✨",
+    "hi": "👋",
+    "music_alt": "🎵",
+    "music_alt2": "🎶",
+    "new": "🆕",
+    "day_night": "🌗",
+    "hearts": "💞",
 }
 
 
