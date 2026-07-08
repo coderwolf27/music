@@ -118,7 +118,7 @@ class Inline:
         )
 
     def help_markup(
-        self, _lang: dict, back: bool = False
+        self, _lang: dict, back: bool = False, sudo: bool = False
     ) -> types.InlineKeyboardMarkup:
         if back:
             rows = [
@@ -127,6 +127,7 @@ class Inline:
                         text=_lang["back"],
                         callback_data="help back",
                         style=enums.ButtonStyle.PRIMARY,
+                        icon_custom_emoji_id=pemoji.ids.get("help_back"),
                     ),
                     self.ikb(
                         text=_lang["close"],
@@ -136,14 +137,31 @@ class Inline:
                 ]
             ]
         else:
-            cbs = ["admins", "auth", "blist", "lang", "ping", "play", "queue", "stats", "sudo"]
+            # (help_N index, callback suffix, icon key) -- index must match
+            # the fixed help_0..help_8 label order regardless of which
+            # entries get filtered out below.
+            entries = [
+                (0, "admins", "admins"),
+                (1, "auth", "auth"),
+                (2, "blist", "blacklist"),
+                (3, "lang", "language"),
+                (4, "ping", "ping"),
+                (5, "play", "help_play"),
+                (6, "queue", "help_queue"),
+                (7, "stats", "stats"),
+                (8, "sudo", "star"),
+            ]
+            if not sudo:
+                entries = [e for e in entries if e[1] != "sudo"]
+
             buttons = [
                 self.ikb(
                     text=_lang[f"help_{i}"],
                     callback_data=f"help {cb}",
                     style=enums.ButtonStyle.PRIMARY,
+                    icon_custom_emoji_id=pemoji.ids.get(icon_key),
                 )
-                for i, cb in enumerate(cbs)
+                for i, cb, icon_key in entries
             ]
             rows = [buttons[i : i + 3] for i in range(0, len(buttons), 3)]
             rows.append(
@@ -152,6 +170,7 @@ class Inline:
                         text=_lang["back"],
                         callback_data="help back",
                         style=enums.ButtonStyle.DANGER,
+                        icon_custom_emoji_id=pemoji.ids.get("help_back"),
                     )
                 ]
             )

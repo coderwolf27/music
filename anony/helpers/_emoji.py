@@ -50,6 +50,15 @@ DEFAULTS = {
     "new": "🆕",
     "day_night": "🌗",
     "hearts": "💞",
+    "help_back": "◀️",
+    "language": "🌐",
+    "stats": "📊",
+    "help_play": "▶️",
+    "ping": "🏓",
+    "admins": "🛡",
+    "auth": "🔑",
+    "blacklist": "🚫",
+    "help_queue": "📜",
 }
 
 

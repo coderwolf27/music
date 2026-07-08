@@ -14,7 +14,7 @@ from anony.helpers import buttons, pemoji, utils
 async def _help(_, m: types.Message):
     await m.reply_text(
         text=f'{pemoji.tag("logo")} {m.lang["help_menu"]}',
-        reply_markup=buttons.help_markup(m.lang),
+        reply_markup=buttons.help_markup(m.lang, sudo=m.from_user.id in app.sudoers),
         quote=True,
     )
 

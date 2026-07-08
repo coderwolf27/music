@@ -132,7 +132,10 @@ async def _help(_, query: types.CallbackQuery):
 
     if data[1] == "back":
         return await query.edit_message_text(
-            text=query.lang["help_menu"], reply_markup=buttons.help_markup(query.lang)
+            text=query.lang["help_menu"],
+            reply_markup=buttons.help_markup(
+                query.lang, sudo=query.from_user.id in app.sudoers
+            ),
         )
     elif data[1] == "close":
         try:
@@ -140,6 +143,9 @@ async def _help(_, query: types.CallbackQuery):
             return await query.message.reply_to_message.delete()
         except Exception:
             return
+
+    if data[1] == "sudo" and query.from_user.id not in app.sudoers:
+        return await query.answer("This section is admin-only.", show_alert=True)
 
     await query.edit_message_text(
         text=query.lang[f"help_{data[1]}"],
