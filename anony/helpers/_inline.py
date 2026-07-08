@@ -68,7 +68,7 @@ class Inline:
                 keyboard.append(
                     [
                         self._styled(
-                            "Share", "logo", enums.ButtonStyle.PRIMARY,
+                            "Share", "logo", enums.ButtonStyle.DANGER,
                             f"share {chat_id}", label="Share",
                         )
                     ]

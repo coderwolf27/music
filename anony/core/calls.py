@@ -53,9 +53,9 @@ class TgCall(PyTgCalls):
 
     async def _expire_share(self, chat_id: int, message_id: int) -> None:
         """The Share button is only meant to be a brief, in-the-moment
-        action -- remove it from the controls row 15s after it appears
+        action -- remove it from the controls row 30s after it appears
         rather than leaving it sitting there indefinitely."""
-        await asyncio.sleep(15)
+        await asyncio.sleep(30)
         try:
             current = queue.get_current(chat_id)
             if not current or current.message_id != message_id:
