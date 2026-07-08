@@ -7,8 +7,8 @@ import re
 
 from pyrogram import errors, filters, types
 
-from anony import anon, app, db, lang, queue, tg, yt
-from anony.helpers import admin_check, buttons, can_manage_vc
+from anony import anon, app, config, db, lang, queue, tg, yt
+from anony.helpers import admin_check, buttons, can_manage_vc, pemoji
 
 
 @app.on_callback_query(filters.regex("cancel_dl") & ~app.bl_users)
@@ -131,18 +131,41 @@ async def _help(_, query: types.CallbackQuery):
         return await query.answer(url=f"https://t.me/{app.username}?start=help")
 
     if data[1] == "back":
-        return await query.edit_message_text(
-            text=query.lang["help_menu"],
-            reply_markup=buttons.help_markup(
-                query.lang, sudo=query.from_user.id in app.sudoers
-            ),
-        )
+        await query.answer()
+        try:
+            return await query.edit_message_text(
+                text=query.lang["help_menu"],
+                reply_markup=buttons.help_markup(
+                    query.lang, sudo=query.from_user.id in app.sudoers
+                ),
+            )
+        except errors.MessageNotModified:
+            # Tapping Back while already on the main grid (e.g. the extra
+            # Back button under the grid itself) edits to identical
+            # content -- Telegram rejects that as a no-op error. Nothing
+            # actually needs to change on screen, so just swallow it.
+            return
     elif data[1] == "close":
+        chat_id = query.message.chat.id
         try:
             await query.message.delete()
-            return await query.message.reply_to_message.delete()
+            await query.message.reply_to_message.delete()
         except Exception:
-            return
+            pass
+
+        _text = query.lang["start_pm"].format(
+            query.from_user.first_name,
+            app.name,
+            pemoji.tag("flower"),
+            pemoji.tag("music"),
+            pemoji.tag("teddy"),
+        )
+        return await app.send_photo(
+            chat_id=chat_id,
+            photo=config.START_IMG,
+            caption=_text,
+            reply_markup=buttons.start_key(query.lang, True),
+        )
 
     if data[1] == "sudo" and query.from_user.id not in app.sudoers:
         return await query.answer("This section is admin-only.", show_alert=True)
