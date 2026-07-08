@@ -66,7 +66,12 @@ class Inline:
             )
             if share:
                 keyboard.append(
-                    [self._styled("📤 Share", "logo", enums.ButtonStyle.PRIMARY, f"share {chat_id}")]
+                    [
+                        self._styled(
+                            "Share", "logo", enums.ButtonStyle.PRIMARY,
+                            f"share {chat_id}", label="Share",
+                        )
+                    ]
                 )
         return self.ikm(keyboard)
 
@@ -94,16 +99,32 @@ class Inline:
         return [elapsed, line, remaining]
 
     def _styled(
-        self, text: str, emoji_key: str, style: "enums.ButtonStyle", callback_data: str
+        self,
+        text: str,
+        emoji_key: str,
+        style: "enums.ButtonStyle",
+        callback_data: str,
+        label: str = None,
     ) -> types.InlineKeyboardButton:
-        """Build a coloured button (Bot API 9.4+), optionally with a premium
-        emoji icon if one is configured in emoji_pack.json for `emoji_key`.
-        Falls back gracefully to a plain-coloured button with no icon."""
+        """Build a coloured button (Bot API 9.4+) with a premium emoji icon
+        if one is configured in emoji_pack.json for `emoji_key`.
+
+        Telegram buttons always need *some* text, but once a real custom
+        emoji icon is showing, a plain-unicode emoji as the text too just
+        duplicates it -- so for icon-only buttons (no `label`), the text
+        collapses to a single space once a custom icon is actually
+        configured, and only falls back to the plain unicode `text` when
+        no custom icon exists yet (so the button is never truly blank).
+        Buttons with a real word `label` (e.g. "Share") always show that
+        label regardless of icon status -- a word isn't a duplicate emoji.
+        """
+        emoji_id = pemoji.ids.get(emoji_key)
+        button_text = label if label is not None else (" " if emoji_id else text)
         return self.ikb(
-            text=text,
+            text=button_text,
             callback_data=callback_data,
             style=style,
-            icon_custom_emoji_id=pemoji.ids.get(emoji_key),
+            icon_custom_emoji_id=emoji_id,
         )
 
     def vskip_markup(

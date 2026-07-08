@@ -3,6 +3,8 @@
 # This file is part of EarBudBot
 
 
+import asyncio
+
 from ntgcalls import (ConnectionNotFound, TelegramServerError,
                       RTMPStreamingUnsupported, ConnectionError)
 from pyrogram.errors import (ChatSendMediaForbidden, ChatSendPhotosForbidden,
@@ -48,6 +50,26 @@ class TgCall(PyTgCalls):
         except Exception:
             pass
 
+
+    async def _expire_share(self, chat_id: int, message_id: int) -> None:
+        """The Share button is only meant to be a brief, in-the-moment
+        action -- remove it from the controls row 15s after it appears
+        rather than leaving it sitting there indefinitely."""
+        await asyncio.sleep(15)
+        try:
+            current = queue.get_current(chat_id)
+            if not current or current.message_id != message_id:
+                return  # track already changed, nothing to expire
+            playing_state = await db.playing(chat_id)
+            await app.edit_message_reply_markup(
+                chat_id=chat_id,
+                message_id=message_id,
+                reply_markup=buttons.controls(
+                    chat_id, share=False, playing=playing_state
+                ),
+            )
+        except Exception:
+            pass
 
     async def play_media(
         self,
@@ -103,6 +125,7 @@ class TgCall(PyTgCalls):
                     media.user,
                 )
                 keyboard = buttons.controls(chat_id, share=isinstance(media, Track))
+                sent_id = message.id
                 try:
                     if _thumb:
                         await message.edit_media(
@@ -129,6 +152,10 @@ class TgCall(PyTgCalls):
                             reply_markup=keyboard,
                         )
                     media.message_id = sent.id
+                    sent_id = sent.id
+
+                if isinstance(media, Track):
+                    asyncio.create_task(self._expire_share(chat_id, sent_id))
         except FileNotFoundError:
             await message.edit_text(_lang["error_no_file"].format(config.SUPPORT_CHAT))
             await self.play_next(chat_id)
