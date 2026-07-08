@@ -126,7 +126,7 @@ class Inline:
                     self.ikb(
                         text=_lang["back"],
                         callback_data="help back",
-                        style=enums.ButtonStyle.PRIMARY,
+                        style=enums.ButtonStyle.SUCCESS,
                         icon_custom_emoji_id=pemoji.ids.get("help_back"),
                     ),
                     self.ikb(
@@ -169,7 +169,7 @@ class Inline:
                     self.ikb(
                         text=_lang["back"],
                         callback_data="help exit",
-                        style=enums.ButtonStyle.DANGER,
+                        style=enums.ButtonStyle.SUCCESS,
                         icon_custom_emoji_id=pemoji.ids.get("help_back"),
                     )
                 ]
