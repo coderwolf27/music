@@ -102,6 +102,43 @@ async def _controls(_, query: types.CallbackQuery):
         status = query.lang["stopped"]
         reply = query.lang["play_stopped"].format(user)
 
+    elif action == "shuffle":
+        enabled = queue.toggle_shuffle(chat_id)
+        status = "Shuffle: ON" if enabled else "Shuffle: OFF"
+        reply = (
+            f"{user} turned shuffle {'on' if enabled else 'off'}."
+        )
+
+    elif action == "previous":
+        if not queue.has_previous(chat_id):
+            return await query.answer(
+                "No previous track to go back to.", show_alert=True
+            )
+
+        media = queue.get_previous(chat_id)
+        media.user = user
+        current = queue.get_current(chat_id)
+        m_id = current.message_id if current else None
+        queue.force_add(chat_id, media)
+        try:
+            if m_id:
+                await app.delete_messages(chat_id=chat_id, message_ids=[m_id], revoke=True)
+        except Exception:
+            pass
+
+        msg = await app.send_message(chat_id=chat_id, text=query.lang["play_next"])
+        if not media.file_path:
+            media.file_path = await yt.download(media.id, video=media.video)
+        media.message_id = msg.id
+        return await anon.play_media(chat_id, msg, media)
+
+    if action == "pause":
+        playing_state = False
+    elif action == "resume":
+        playing_state = True
+    else:
+        playing_state = await db.playing(chat_id)
+
     try:
         if action in ["skip", "replay", "stop"]:
             await query.message.reply_text(reply, quote=False)
@@ -114,7 +151,9 @@ async def _controls(_, query: types.CallbackQuery):
                 flags=re.DOTALL,
             )
             keyboard = buttons.controls(
-                chat_id, status=status if action != "resume" else None
+                chat_id,
+                status=status if action != "resume" else None,
+                playing=playing_state,
             )
         await query.edit_message_text(
             f"{mtext}\n\n<blockquote>{reply}</blockquote>", reply_markup=keyboard

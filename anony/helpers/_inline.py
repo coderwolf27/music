@@ -39,6 +39,7 @@ class Inline:
         timer: tuple = None,
         remove: bool = False,
         share: bool = False,
+        playing: bool = True,
     ) -> types.InlineKeyboardMarkup:
         keyboard = []
         if status:
@@ -49,13 +50,18 @@ class Inline:
             keyboard.append(self._progress_row(chat_id, *timer))
 
         if not remove:
+            play_pause = (
+                self._styled("⏸", "pause", enums.ButtonStyle.PRIMARY, f"controls pause {chat_id}")
+                if playing
+                else self._styled("▶️", "play", enums.ButtonStyle.SUCCESS, f"controls resume {chat_id}")
+            )
             keyboard.append(
                 [
-                    self._styled("▶️", "play", enums.ButtonStyle.SUCCESS, f"controls resume {chat_id}"),
-                    self._styled("⏸", "pause", enums.ButtonStyle.PRIMARY, f"controls pause {chat_id}"),
-                    self._styled("🔁", "replay", enums.ButtonStyle.PRIMARY, f"controls replay {chat_id}"),
+                    self._styled("🔀", "shuffle", enums.ButtonStyle.PRIMARY, f"controls shuffle {chat_id}"),
+                    self._styled("⏮", "previous", enums.ButtonStyle.PRIMARY, f"controls previous {chat_id}"),
+                    play_pause,
                     self._styled("⏭", "skip", enums.ButtonStyle.PRIMARY, f"controls skip {chat_id}"),
-                    self._styled("⏹", "stop", enums.ButtonStyle.DANGER, f"controls stop {chat_id}"),
+                    self._styled("🔁", "replay", enums.ButtonStyle.PRIMARY, f"controls replay {chat_id}"),
                 ]
             )
             if share:

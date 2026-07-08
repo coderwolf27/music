@@ -15,6 +15,8 @@ DEFAULTS = {
     "pause": "⏸",
     "stop": "⏹",
     "skip": "⏭",
+    "previous": "⏮",
+    "shuffle": "🔀",
     "replay": "🔁",
     "queue": "📜",
     "music": "🎧",
