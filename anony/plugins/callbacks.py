@@ -145,7 +145,7 @@ async def _help(_, query: types.CallbackQuery):
             # content -- Telegram rejects that as a no-op error. Nothing
             # actually needs to change on screen, so just swallow it.
             return
-    elif data[1] == "close":
+    elif data[1] in ("close", "exit"):
         chat_id = query.message.chat.id
         try:
             await query.message.delete()
