@@ -92,7 +92,7 @@ async def play_hndlr(
     if not file:
         return await sent.edit_text(m.lang["play_usage"])
 
-    if file.duration_sec > config.DURATION_LIMIT:
+    if config.DURATION_LIMIT and file.duration_sec > config.DURATION_LIMIT:
         return await sent.edit_text(
             m.lang["play_duration_limit"].format(config.DURATION_LIMIT // 60)
         )
